@@ -2,10 +2,11 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>5月23日 09:50 倒计时</title>
     <style>
         * {
+            /* 关键修改2：确保所有元素都使用 border-box 盒模型，简化布局 */
             box-sizing: border-box;
         }
         body {
@@ -17,6 +18,8 @@
             color: #ecf0f1;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
+            /* 关键修改3：防止手机上的内容溢出 */
+            overflow: hidden;
         }
         .countdown-container {
             text-align: center;
@@ -24,6 +27,8 @@
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            /* 关键修改4：容器宽度自适应 */
+            max-width: 90%;
         }
         h1 {
             font-size: 2.2em;
@@ -35,11 +40,16 @@
             display: flex;
             gap: 25px;
             justify-content: center;
+            /* 关键修改5：允许数字块包裹到下一行 */
+            flex-wrap: wrap;
         }
         .time-block {
             display: flex;
             flex-direction: column;
             align-items: center;
+            /* 关键修改6：数字块宽度自适应 */
+            flex: 1;
+            min-width: 120px;
         }
         .number {
             font-size: 4.5em;
@@ -50,6 +60,8 @@
             border-radius: 12px;
             min-width: 110px;
             box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2);
+            /* 关键修改7：数字大小自适应 */
+            width: 100%;
         }
         .label {
             margin-top: 15px;
@@ -57,19 +69,68 @@
             color: #bdc3c7;
             letter-spacing: 2px;
         }
+
+        /* --- 关键修改8：添加 CSS 媒体查询，针对不同屏幕宽度应用不同样式 --- */
+        
+        /* 针对平板电脑（宽度 <= 768px） */
+        @media screen and (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .time-blocks {
+                gap: 15px;
+            }
+            .time-block {
+                min-width: 100px;
+            }
+            .number {
+                font-size: 3em;
+                padding: 10px 15px;
+            }
+        }
+
+        /* 针对手机（宽度 <= 480px） */
+        @media screen and (max-width: 480px) {
+            .countdown-container {
+                padding: 30px;
+            }
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+            }
+            .time-blocks {
+                /* 关键修改9：将数字块改为单列显示 */
+                flex-direction: column;
+                gap: 10px;
+                align-items: stretch;
+            }
+            .time-block {
+                flex: none;
+                width: 100%;
+                min-width: 0;
+            }
+            .number {
+                font-size: 2.2em;
+                padding: 8px 10px;
+            }
+            .label {
+                margin-top: 8px;
+                font-size: 1em;
+                letter-spacing: 1px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="countdown-container">
         <h1>距离我原谅你还有</h1>
         <div class="time-blocks" id="countdown">
-            <!-- 倒计时数字将通过 JS 动态注入这里 -->
             <div class="number" style="font-size: 2em; background: transparent; box-shadow: none;">计算中...</div>
         </div>
     </div>
 
     <script>
-        // 自动获取当前年份，确保目标时间是今年的 5月23日
+        // 自动获取当前年份，确保目标时间是今年的 5月22日
         const currentYear = new Date().getFullYear();
         // JavaScript 中 Date 对象的月份从 0 开始（0代表1月，4代表5月）
         const targetDate = new Date(currentYear, 4, 23, 9, 50, 0).getTime();
@@ -87,7 +148,7 @@
             // 如果倒计时结束
             if (distance < 0) {
                 clearInterval(updateCountdown);
-                countdownElement.innerHTML = "<div class='number' style='font-size: 3em;'>时间到！</div>";
+                countdownElement.innerHTML = "<div class='number' style='font-size: 3em; background: transparent; box-shadow: none;'>时间到！</div>";
                 return;
             }
 
